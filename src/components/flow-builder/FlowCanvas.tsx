@@ -273,6 +273,46 @@ function FlowElementNode({ element, isSelected, onSelect, onRemove }: FlowElemen
             <span className="text-muted-foreground">📅</span>
           </div>
         );
+      case 'calendar-picker':
+        return (
+          <div className="bg-muted rounded-lg px-3 py-2 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {element.properties.label || (element.properties.mode === 'range' ? 'Select date range' : 'Select date')}
+            </span>
+            <span className="text-muted-foreground">📆</span>
+          </div>
+        );
+      case 'image-picker':
+        return (
+          <div className="w-full h-20 bg-muted rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/30">
+            <span className="text-lg">🖼️</span>
+            <span className="text-[10px] text-muted-foreground">{element.properties.label || 'Upload Image'}</span>
+          </div>
+        );
+      case 'document-picker':
+        return (
+          <div className="w-full h-16 bg-muted rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/30">
+            <span className="text-lg">📄</span>
+            <span className="text-[10px] text-muted-foreground">{element.properties.label || 'Upload Document'}</span>
+          </div>
+        );
+      case 'embedded-link':
+        return (
+          <div className="text-xs text-primary underline cursor-pointer">
+            {element.properties.text || 'Click here'}
+          </div>
+        );
+      case 'navigation-list':
+        return (
+          <div className="space-y-1">
+            {(element.properties.items || ['Item 1', 'Item 2']).slice(0, 3).map((item: string, idx: number) => (
+              <div key={idx} className="bg-muted rounded-lg px-3 py-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{item}</span>
+                <span className="text-muted-foreground">›</span>
+              </div>
+            ))}
+          </div>
+        );
       case 'opt-in':
         return (
           <div className="flex items-start gap-2">

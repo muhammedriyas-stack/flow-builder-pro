@@ -4,7 +4,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Settings2, FileText, Layout } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Settings2, FileText, Layout, Plus, X } from 'lucide-react';
 
 interface PropertiesPanelProps {
   selectedScreen: FlowScreen | null;
@@ -156,7 +158,112 @@ function renderElementProperties(element: FlowElement, onUpdate: (element: FlowE
 
     case 'text-input':
     case 'text-area':
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Label</Label>
+            <Input
+              value={element.properties.label || ''}
+              onChange={(e) => updateProperty('label', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="Field label"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Name (variable)</Label>
+            <Input
+              value={element.properties.name || ''}
+              onChange={(e) => updateProperty('name', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
+              placeholder="field_name"
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Required</Label>
+            <Switch
+              checked={element.properties.required || false}
+              onCheckedChange={(checked) => updateProperty('required', checked)}
+            />
+          </div>
+        </div>
+      );
+
     case 'dropdown':
+      const options = element.properties.options || [];
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Label</Label>
+            <Input
+              value={element.properties.label || ''}
+              onChange={(e) => updateProperty('label', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="Field label"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Name (variable)</Label>
+            <Input
+              value={element.properties.name || ''}
+              onChange={(e) => updateProperty('name', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
+              placeholder="field_name"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs text-muted-foreground">Options</Label>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-6 px-2 text-xs"
+                onClick={() => updateProperty('options', [...options, { id: `opt_${Date.now()}`, title: '' }])}
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Add
+              </Button>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-auto">
+              {options.map((opt: { id: string; title: string }, idx: number) => (
+                <div key={opt.id} className="flex items-center gap-2">
+                  <Input
+                    value={opt.title}
+                    onChange={(e) => {
+                      const newOptions = [...options];
+                      newOptions[idx] = { ...opt, title: e.target.value };
+                      updateProperty('options', newOptions);
+                    }}
+                    className="bg-sidebar-accent border-sidebar-border text-xs flex-1"
+                    placeholder={`Option ${idx + 1}`}
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7 text-destructive hover:text-destructive"
+                    onClick={() => {
+                      const newOptions = options.filter((_: any, i: number) => i !== idx);
+                      updateProperty('options', newOptions);
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+              {options.length === 0 && (
+                <p className="text-[10px] text-muted-foreground/70">No options added yet</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Required</Label>
+            <Switch
+              checked={element.properties.required || false}
+              onCheckedChange={(checked) => updateProperty('required', checked)}
+            />
+          </div>
+        </div>
+      );
+
     case 'date-picker':
       return (
         <div className="space-y-4 pl-6">
@@ -177,6 +284,185 @@ function renderElementProperties(element: FlowElement, onUpdate: (element: FlowE
               className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
               placeholder="field_name"
             />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Required</Label>
+            <Switch
+              checked={element.properties.required || false}
+              onCheckedChange={(checked) => updateProperty('required', checked)}
+            />
+          </div>
+        </div>
+      );
+
+    case 'calendar-picker':
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Label</Label>
+            <Input
+              value={element.properties.label || ''}
+              onChange={(e) => updateProperty('label', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="Field label"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Name (variable)</Label>
+            <Input
+              value={element.properties.name || ''}
+              onChange={(e) => updateProperty('name', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
+              placeholder="field_name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Mode</Label>
+            <Select
+              value={element.properties.mode || 'single'}
+              onValueChange={(value) => updateProperty('mode', value)}
+            >
+              <SelectTrigger className="bg-sidebar-accent border-sidebar-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                <SelectItem value="single">Single Date</SelectItem>
+                <SelectItem value="range">Date Range</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Required</Label>
+            <Switch
+              checked={element.properties.required || false}
+              onCheckedChange={(checked) => updateProperty('required', checked)}
+            />
+          </div>
+        </div>
+      );
+
+    case 'image-picker':
+    case 'document-picker':
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Label</Label>
+            <Input
+              value={element.properties.label || ''}
+              onChange={(e) => updateProperty('label', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder={element.type === 'image-picker' ? 'Upload Image' : 'Upload Document'}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Name (variable)</Label>
+            <Input
+              value={element.properties.name || ''}
+              onChange={(e) => updateProperty('name', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
+              placeholder="file_upload"
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Required</Label>
+            <Switch
+              checked={element.properties.required || false}
+              onCheckedChange={(checked) => updateProperty('required', checked)}
+            />
+          </div>
+        </div>
+      );
+
+    case 'embedded-link':
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Link Text</Label>
+            <Input
+              value={element.properties.text || ''}
+              onChange={(e) => updateProperty('text', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="Click here"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">URL</Label>
+            <Input
+              value={element.properties.url || ''}
+              onChange={(e) => updateProperty('url', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+      );
+
+    case 'checkbox-group':
+    case 'radio-buttons':
+      const selectionOptions = element.properties.options || [];
+      return (
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Label</Label>
+            <Input
+              value={element.properties.label || ''}
+              onChange={(e) => updateProperty('label', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border"
+              placeholder="Field label"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Name (variable)</Label>
+            <Input
+              value={element.properties.name || ''}
+              onChange={(e) => updateProperty('name', e.target.value)}
+              className="bg-sidebar-accent border-sidebar-border font-mono text-xs"
+              placeholder="field_name"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs text-muted-foreground">Options</Label>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-6 px-2 text-xs"
+                onClick={() => updateProperty('options', [...selectionOptions, { id: `opt_${Date.now()}`, title: '' }])}
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Add
+              </Button>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-auto">
+              {selectionOptions.map((opt: { id: string; title: string }, idx: number) => (
+                <div key={opt.id} className="flex items-center gap-2">
+                  <Input
+                    value={opt.title}
+                    onChange={(e) => {
+                      const newOptions = [...selectionOptions];
+                      newOptions[idx] = { ...opt, title: e.target.value };
+                      updateProperty('options', newOptions);
+                    }}
+                    className="bg-sidebar-accent border-sidebar-border text-xs flex-1"
+                    placeholder={`Option ${idx + 1}`}
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7 text-destructive hover:text-destructive"
+                    onClick={() => {
+                      const newOptions = selectionOptions.filter((_: any, i: number) => i !== idx);
+                      updateProperty('options', newOptions);
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+              {selectionOptions.length === 0 && (
+                <p className="text-[10px] text-muted-foreground/70">No options added yet</p>
+              )}
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <Label className="text-xs text-muted-foreground">Required</Label>
