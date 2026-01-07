@@ -5,6 +5,8 @@ export type FlowElementType =
   | 'text-body'
   | 'text-caption'
   | 'image'
+  | 'image-picker'
+  | 'document-picker'
   | 'footer'
   | 'opt-in'
   | 'text-input'
@@ -13,6 +15,7 @@ export type FlowElementType =
   | 'radio-buttons'
   | 'dropdown'
   | 'date-picker'
+  | 'calendar-picker'
   | 'embedded-link'
   | 'navigation-list';
 
@@ -68,6 +71,8 @@ export const ELEMENT_CATEGORIES: ElementCategory[] = [
     name: 'Media',
     elements: [
       { type: 'image', label: 'Image', icon: 'Image', description: 'Display an image' },
+      { type: 'image-picker', label: 'Image Picker', icon: 'ImagePlus', description: 'Upload image' },
+      { type: 'document-picker', label: 'Document Picker', icon: 'FileUp', description: 'Upload document' },
       { type: 'embedded-link', label: 'Embedded Link', icon: 'Link', description: 'Clickable link' },
     ]
   },
@@ -78,6 +83,7 @@ export const ELEMENT_CATEGORIES: ElementCategory[] = [
       { type: 'text-area', label: 'Text Area', icon: 'FileText', description: 'Multi-line input' },
       { type: 'dropdown', label: 'Dropdown', icon: 'ChevronDown', description: 'Select dropdown' },
       { type: 'date-picker', label: 'Date Picker', icon: 'Calendar', description: 'Date selection' },
+      { type: 'calendar-picker', label: 'Calendar Picker', icon: 'CalendarRange', description: 'Date range selection' },
     ]
   },
   {
